@@ -23,6 +23,45 @@ END;
 -- BULK COLLECT : 데이터를 한 번에 많이 읽어들여 성능을 향상시킵니다.
 -- FORALL : Insert작업을 배치로 처리하여 여러 개의 Insert를 한번에 실행합니다.
 
+-- 또다른예시... 이게 더 좋은방법?
+DECLARE
+    CURSOR cur_batch IS
+        SELECT * FROM source_table
+        WHERE ROWNUM <= 2000000; -- 필요한 데이터 조건
+    TYPE t_batch IS TABLE OF source_table%ROWTYPE;
+    l_batch t_batch;
+    l_commit_size CONSTANT PLS_INTEGER := 10000; -- 배치 크기
+BEGIN
+    OPEN cur_batch;
+    LOOP
+        FETCH cur_batch BULK COLLECT INTO l_batch LIMIT l_commit_size; -- 배치로 읽기
+        EXIT WHEN l_batch.COUNT = 0;
+
+        -- 데이터 INSERT
+        FORALL i IN 1 .. l_batch.COUNT
+            INSERT INTO target_table VALUES l_batch(i);
+
+        -- 배치마다 커밋
+        COMMIT;
+    END LOOP;
+    CLOSE cur_batch;
+END;
+
+-- 또다른방법2... OFFSET 및 FETCH를 사용한 INSERT (11g 이상)
+BEGIN
+    FOR i IN 0..199 LOOP
+        INSERT INTO target_table
+        SELECT *
+        FROM (
+            SELECT * FROM source_table
+            ORDER BY id -- 적절한 기준으로 정렬
+        )
+        OFFSET i * 10000 ROWS FETCH NEXT 10000 ROWS ONLY; -- 배치 크기: 10,000
+
+        COMMIT; -- 배치마다 커밋
+    END LOOP;
+END;
+
 
 -- 2. 인덱스 및 제약 조건 확인
 
