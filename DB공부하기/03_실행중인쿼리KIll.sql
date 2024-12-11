@@ -6,6 +6,9 @@ FROM v$session s
 JOIN v$sql q ON s.sql_id = q.sql_id
 WHERE s.status = 'ACTIVE';
 
+-- v$session : 동적 성능 뷰(Dynamic Performance View) 중 하나, 현재 데이터베이스의 세션 정보를 제공
+
+
 -- 2. sid, serial 번호 확인 후 동작중인 쿼리 kill작업진행
 begin
     rdsadmin.rdsadmin_util.kill(

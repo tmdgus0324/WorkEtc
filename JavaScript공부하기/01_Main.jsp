@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script>
-        if (getCookie("Popup") != "done"){
+        if (getCookie("startPopup") != "done"){
             function popupOpen(){
                 var popupFlag = false;
 
