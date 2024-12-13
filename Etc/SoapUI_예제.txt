@@ -1,0 +1,17 @@
+SoapUI 예제
+
+0. WSDL 파일 준비
+    TEST예제: http://www.dneonline.com/calculator.asmx?wsdl
+
+1. New SOAP Project 클릭
+    Project Name: CalculatorSOAPProject
+    Initial WSDL: http://www.dneonline.com/calculator.asmx?wsdl
+
+    OK를 클릭하면, WSDL 파일에서 작업 가능한 메서드가 자동으로 로드
+
+2. 프로젝트 트리에서 Add 메서드를 찾는다.
+    경로 예시: CalculatorSOAPProject -> CalculatorSoap -> Add
+
+3. 템플릿에서 intA와 intB 값을 임의입력
+
+4. Run 버튼(녹색 화살표)을 클릭하여 요청전송
